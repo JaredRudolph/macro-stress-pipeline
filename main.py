@@ -1,5 +1,5 @@
 def main():
-    print("Hello from market-data-pipeline!")
+    pass
 
 
 if __name__ == "__main__":
