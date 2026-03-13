@@ -1,10 +1,19 @@
 from pathlib import Path
-from loguru import logger
-import pandas as pd
 
-from macro_stress.fetch_data import fetch_market_data, fetch_fred_data
-from macro_stress.process_data import merge_all
+import pandas as pd
+from loguru import logger
+
 from macro_stress.features import compute_stress_score
+from macro_stress.fetch_data import fetch_fred_data, fetch_market_data
+from macro_stress.process_data import merge_all
+
+# START_DATE chosen based on availability of Index/Ticker data
+START_DATE = "2008-01-01"
+
+
+def get_end_date() -> str:
+    return pd.Timestamp.today().strftime("%Y-%m-%d")
+
 
 MARKET_TICKERS = [
     "SPY",  # S&P 500 (overlay only)
@@ -31,7 +40,9 @@ FRED_SERIES = [
 OUTPUT_PATH = Path("data/processed/stress_score.parquet")
 
 
-def run(start: str, end: str) -> pd.DataFrame:
+def run(start: str = START_DATE, end: str = None) -> pd.DataFrame:
+    end = end or get_end_date()
+
     logger.info("Fetching market data")
     df_market = fetch_market_data(MARKET_TICKERS, start, end)
 
@@ -52,4 +63,8 @@ def run(start: str, end: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    run(start="2020-01-01", end="2027-01-01")
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
+    run()
