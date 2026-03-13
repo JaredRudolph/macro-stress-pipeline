@@ -20,37 +20,27 @@ def merge_all(df_market: pd.DataFrame, df_fred: pd.DataFrame) -> pd.DataFrame:
 
     combined = df_market.join(df_fred_daily, how="left")
     combined = combined.join(ratios, how="left", rsuffix="_ratio")
+    combined = combined.ffill()
     return combined
 
 
 if __name__ == "__main__":
-    from macro_stress.fetch_data import fetch_market_data, fetch_fred_data
+    from dotenv import load_dotenv
 
-    MARKET_TICKERS = [
-        "SPY",  # S&P 500 (overlay only)
-        "^VIX",  # VIX
-        "^VIX3M",  # VIX 3-month (for ratio)
-        "^SKEW",  # SKEW index
-        "HYG",  # High yield bonds (for ratio)
-        "LQD",  # Investment grade bonds (for ratio)
-        "GLD",  # Gold (for ratio)
-        "XLK",  # Tech ETF (for ratio)
-        "XLV",  # Healthcare ETF (for ratio)
-        "DX-Y.NYB",  # DXY dollar index
-        "USDCNY=X",  # USD/CNY
-    ]
+    from macro_stress.fetch_data import fetch_fred_data, fetch_market_data
+    from macro_stress.pipeline import (
+        FRED_SERIES,
+        MARKET_TICKERS,
+        START_DATE,
+        get_end_date,
+    )
 
-    FRED_SERIES = [
-        "T10Y2Y",  # yield curve spread (10Y-2Y)
-        "ICSA",  # initial jobless claims
-        "CPIAUCSL",  # CPI
-        "DRCCLACBS",  # credit card delinquency rate
-        "USSLIND",  # leading economic index
-    ]
+    load_dotenv()
 
-    df_market = fetch_market_data(MARKET_TICKERS, start="2022-01-01", end="2027-01-01")
+    df_market = fetch_market_data(MARKET_TICKERS, START_DATE, get_end_date())
     df_fred = fetch_fred_data(FRED_SERIES)
     df = merge_all(df_market, df_fred)
+
     print(df.head())
     print(df.dtypes)
     print(df.isna().sum())
