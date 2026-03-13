@@ -3,7 +3,7 @@ name = "macro-stress-pipeline"
 version = "0.1.0"
 description = "Macro and market data pipeline that computes a composite financial stress score, percentile-ranked against its own history and overlaid with SPY to visualize correlation with market drawdowns."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "fredapi>=0.5.2",
     "loguru>=0.7.3",
