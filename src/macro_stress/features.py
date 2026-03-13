@@ -1,12 +1,15 @@
 import pandas as pd
 
-FLIP_COLS = {"HYG_LQD", "XLK_XLV", "T10Y2Y", "USALOLITOAASTSAM"}
+FLIP_COLS = {
+    "XLK_XLV",
+    "T10Y2Y",
+    "USALOLITOAASTSAM",
+}
 
 SCORE_COLS = [
     "^VIX",
     "VIX_VIX3M",
     "^SKEW",
-    "HYG_LQD",
     "GLD_SPY",
     "DX=F",
     "USDCNY=X",
@@ -16,6 +19,7 @@ SCORE_COLS = [
     "CPIAUCSL",
     "DRCCLACBS",
     "USALOLITOAASTSAM",
+    "BAMLH0A0HYM2",
 ]
 
 
