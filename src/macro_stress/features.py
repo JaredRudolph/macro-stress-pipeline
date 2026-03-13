@@ -60,7 +60,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     df_market = fetch_market_data(MARKET_TICKERS, START_DATE, get_end_date())
-    df_fred = fetch_fred_data(FRED_SERIES)
+    df_fred = fetch_fred_data(FRED_SERIES, START_DATE, get_end_date())
     df_merged = merge_all(df_market, df_fred)
     df_scored = compute_stress_score(df_merged)
     score_min = df_scored["stress_score"].min()
