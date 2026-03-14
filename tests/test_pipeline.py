@@ -58,7 +58,7 @@ def test_run_output_has_expected_columns(tmp_path):
     ):
         result = run()
 
-    assert "stress_score" in result.columns
+    assert "STRESS_SCORE" in result.columns
     assert "SPY" in result.columns
 
 
