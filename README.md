@@ -56,6 +56,26 @@ Outputs:
 - `data/raw/fred_raw.csv` — raw FRED series
 - `data/processed/stress_score.parquet` — scored output with all ranked indicators and SPY
 
+## Analysis
+
+`notebooks/analysis.ipynb` visualizes the pipeline output. Run the pipeline first to generate `data/processed/stress_score.parquet`, then open the notebook in Jupyter or VS Code and run all cells.
+
+**Stress score vs SPY**
+
+![Stress score vs SPY](docs/stress_vs_spy.png)
+
+**Stress score vs SPY drawdown (normalized)**
+
+![Stress score vs SPY drawdown](docs/stress_vs_drawdown.png)
+
+**Indicator breakdown — most recent observation**
+
+![Indicator breakdown](docs/indicator_breakdown.png)
+
+**Individual indicator time series**
+
+![Individual indicators](docs/indicator_grid.png)
+
 ## Development
 
 ```bash
