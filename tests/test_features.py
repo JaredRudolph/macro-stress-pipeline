@@ -51,13 +51,13 @@ def test_flip_direction_is_involution():
 
 def test_compute_stress_score_output_columns():
     result = compute_stress_score(make_score_df())
-    assert "stress_score" in result.columns
+    assert "STRESS_SCORE" in result.columns
     assert "SPY" in result.columns
 
 
 def test_compute_stress_score_bounded():
     result = compute_stress_score(make_score_df())
-    scores = result["stress_score"].dropna()
+    scores = result["STRESS_SCORE"].dropna()
     assert (scores >= 0).all() and (scores <= 1).all()
 
 
