@@ -6,7 +6,7 @@ FLIP_COLS = {
     "USALOLITOAASTSAM",
 }
 
-SCORE_COLS = [
+MARKET_SCORE_COLS = [
     "^VIX",
     "VIX_VIX3M",
     "^SKEW",
@@ -14,6 +14,9 @@ SCORE_COLS = [
     "DX=F",
     "USDCNY=X",
     "XLK_XLV",
+]
+
+FRED_SCORE_COLS = [
     "T10Y2Y",
     "ICSA",
     "CPIAUCSL",
@@ -21,6 +24,8 @@ SCORE_COLS = [
     "USALOLITOAASTSAM",
     "BAMLH0A0HYM2",
 ]
+
+SCORE_COLS = MARKET_SCORE_COLS + FRED_SCORE_COLS
 
 
 def rolling_percentile_rank(series: pd.Series, window: int = 756) -> pd.Series:
@@ -40,9 +45,9 @@ def compute_stress_score(df: pd.DataFrame) -> pd.DataFrame:
         ranked[col] = ranked_col
 
     ranked_df = pd.DataFrame(ranked, index=df.index)
-    ranked_df["stress_score"] = ranked_df.mean(axis=1)
+    ranked_df["STRESS_SCORE"] = ranked_df.mean(axis=1)
     ranked_df["SPY"] = df["SPY"]
-    return ranked_df
+    return ranked_df[["STRESS_SCORE", "SPY"] + MARKET_SCORE_COLS + FRED_SCORE_COLS]
 
 
 if __name__ == "__main__":
@@ -63,9 +68,9 @@ if __name__ == "__main__":
     df_fred = fetch_fred_data(FRED_SERIES, START_DATE, get_end_date())
     df_merged = merge_all(df_market, df_fred)
     df_scored = compute_stress_score(df_merged)
-    score_min = df_scored["stress_score"].min()
-    score_max = df_scored["stress_score"].max()
+    score_min = df_scored["STRESS_SCORE"].min()
+    score_max = df_scored["STRESS_SCORE"].max()
 
-    print(df_scored[["stress_score"]].dropna().tail(10))
+    print(df_scored[["STRESS_SCORE"]].dropna().tail(10))
     print(f"\nNaN count:\n{df_scored.isna().sum()}")
     print(f"\nScore range: {score_min:.2f} - {score_max:.2f}")
