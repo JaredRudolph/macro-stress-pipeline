@@ -58,7 +58,7 @@ Outputs:
 
 ## Analysis
 
-`notebooks/analysis.ipynb` visualizes the pipeline output. Run the pipeline first to generate `data/processed/stress_score.parquet`, then open the notebook in Jupyter or VS Code and run all cells.
+`notebooks/stress_score_eda.ipynb` visualizes the pipeline output. Run the pipeline first to generate `data/processed/stress_score.parquet`, then open the notebook in Jupyter or VS Code and run all cells.
 
 **Stress score vs SPY**
 
