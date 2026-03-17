@@ -2,11 +2,11 @@
 
 A data pipeline that ingests macro and market data, computes a composite financial stress score, and writes the result to parquet for downstream analysis.
 
-The score is a rolling percentile rank (3-year window) averaged across 16 leading indicators, normalized so that **1.0 = maximum stress**. It is built exclusively from indicators that tend to move ahead of broad market conditions — not reactive or coincident ones. The goal is a forward-looking risk signal that leads SPY drawdowns rather than confirming them after the fact.
+The score is a rolling percentile rank (3-year window) averaged across 16 leading indicators, normalized so that **1.0 = maximum stress**. It is built exclusively from indicators that tend to move ahead of broad market conditions, not reactive or coincident ones. The goal is a forward-looking risk signal that leads SPY drawdowns rather than confirming them after the fact.
 
 ## Indicators
 
-All indicators are leading in nature — selected to move ahead of broad market stress rather than confirm it. Reactive or coincident series (VIX, CPI, SKEW, GLD/SPY, USD/CNY) were excluded by design.
+All indicators are leading in nature, selected to move ahead of broad market stress rather than confirm it. Reactive or coincident series (VIX, CPI, SKEW, GLD/SPY, USD/CNY) were excluded by design.
 
 **Market (yfinance)**
 | Ticker | Indicator |
