@@ -2,30 +2,37 @@
 
 A data pipeline that ingests macro and market data, computes a composite financial stress score, and writes the result to parquet for downstream analysis.
 
-The score is a rolling percentile rank (3-year window) averaged across 13 indicators, normalized so that **1.0 = maximum stress**. It is descriptive, not predictive. Useful for contextualizing market conditions against historical stress levels.
+The score is a rolling percentile rank (3-year window) averaged across 16 leading indicators, normalized so that **1.0 = maximum stress**. It is built exclusively from indicators that tend to move ahead of broad market conditions — not reactive or coincident ones. The goal is a forward-looking risk signal that leads SPY drawdowns rather than confirming them after the fact.
 
 ## Indicators
+
+All indicators are leading in nature — selected to move ahead of broad market stress rather than confirm it. Reactive or coincident series (VIX, CPI, SKEW, GLD/SPY, USD/CNY) were excluded by design.
 
 **Market (yfinance)**
 | Ticker | Indicator |
 |---|---|
-| `^VIX` | VIX |
-| `^VIX` / `^VIX3M` | Near-term fear ratio |
-| `^SKEW` | Tail risk demand |
-| `GLD` / `SPY` | Risk-off ratio |
-| `DX=F` | DXY dollar index |
-| `USDCNY=X` | USD/CNY |
 | `XLK` / `XLV` | Tech vs defensive rotation |
+| `TLT` | Long-duration Treasuries (flight-to-safety demand) |
+| `HG=F` | Copper futures (global growth proxy) |
+| `CL=F` | Crude oil (rate-of-change; demand collapse or supply shock) |
+| `EEM` | Emerging markets (risk appetite proxy) |
+| `DX=F` | DXY dollar index (safe-haven demand) |
 
 **Macro (FRED)**
 | Series | Indicator |
 |---|---|
 | `T10Y2Y` | Yield curve spread (10Y-2Y) |
+| `T10Y3M` | Yield curve spread (10Y-3M) |
+| `T30Y10Y` | Term premium spread (30Y-10Y) |
+| `USALOLITOAASTSAM` | OECD CLI (composite leading indicator) |
+| `UMCSENT` | University of Michigan consumer sentiment |
+| `PERMIT` | Building permits (housing leading indicator) |
+| `NEWORDER` | Manufacturers' new orders (ISM proxy) |
 | `ICSA` | Initial jobless claims |
-| `CPIAUCSL` | CPI |
 | `DRCCLACBS` | Credit card delinquency rate |
-| `USALOLITOAASTSAM` | OECD Leading Indicators |
 | `BAMLH0A0HYM2` | ICE BofA HY OAS spread |
+
+`CL=F` uses rate-of-change normalization rather than standard rolling percentile rank, since both sharp drops (demand collapse) and sharp spikes (supply shock) represent stress conditions.
 
 ## Setup
 
