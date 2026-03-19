@@ -4,35 +4,51 @@ A data pipeline that ingests macro and market data, computes a composite financi
 
 The score is a rolling percentile rank (3-year window) averaged across 16 leading indicators, normalized so that **1.0 = maximum stress**. It is built exclusively from indicators that tend to move ahead of broad market conditions, not reactive or coincident ones. The goal is a forward-looking risk signal that leads SPY drawdowns rather than confirming them after the fact.
 
+The stress score is a forward-looking risk indicator built from indicators with demonstrated leading properties. Reactive and coincident indicators (VIX, SKEW, CPI, USD/CNY, gold/equity ratio) were excluded. Optimized weights improve historical fit; they are not a trading signal.
+
 ## Indicators
 
-All indicators are leading in nature, selected to move ahead of broad market stress rather than confirm it. Reactive or coincident series (VIX, CPI, SKEW, GLD/SPY, USD/CNY) were excluded by design.
+**Yield curve (FRED)**
+| Series | Indicator |
+|---|---|
+| `T10Y2Y` | 10Y-2Y Treasury spread |
+| `T10Y3M` | 10Y-3M Treasury spread |
+| `T30Y10Y` | 30Y-10Y Treasury spread (computed: `DGS30 - DGS10`) |
+
+**Macro leading (FRED)**
+| Series | Indicator |
+|---|---|
+| `USALOLITOAASTSAM` | OECD composite leading indicator |
+| `UMCSENT` | University of Michigan consumer sentiment |
+| `PERMIT` | Building permits |
+| `NEWORDER` | Manufacturers new orders |
+
+**Labor and credit (FRED)**
+| Series | Indicator |
+|---|---|
+| `ICSA` | Initial jobless claims |
+| `DRCCLACBS` | Credit card delinquency rate |
+| `BAMLH0A0HYM2` | ICE BofA HY OAS spread |
 
 **Market (yfinance)**
 | Ticker | Indicator |
 |---|---|
 | `XLK` / `XLV` | Tech vs defensive rotation |
-| `TLT` | Long-duration Treasuries (flight-to-safety demand) |
-| `HG=F` | Copper futures (global growth proxy) |
-| `CL=F` | Crude oil (rate-of-change; demand collapse or supply shock) |
-| `EEM` | Emerging markets (risk appetite proxy) |
-| `DX=F` | DXY dollar index (safe-haven demand) |
-
-**Macro (FRED)**
-| Series | Indicator |
-|---|---|
-| `T10Y2Y` | Yield curve spread (10Y-2Y) |
-| `T10Y3M` | Yield curve spread (10Y-3M) |
-| `T30Y10Y` | Term premium spread (30Y-10Y) |
-| `USALOLITOAASTSAM` | OECD CLI (composite leading indicator) |
-| `UMCSENT` | University of Michigan consumer sentiment |
-| `PERMIT` | Building permits (housing leading indicator) |
-| `NEWORDER` | Manufacturers' new orders (ISM proxy) |
-| `ICSA` | Initial jobless claims |
-| `DRCCLACBS` | Credit card delinquency rate |
-| `BAMLH0A0HYM2` | ICE BofA HY OAS spread |
+| `TLT` | Long-duration Treasury ETF |
+| `HG=F` | Copper futures (growth proxy) |
+| `CL=F` | Crude oil futures (rate-of-change; dual stress regime) |
+| `EEM` | Emerging markets ETF |
+| `DX=F` | DXY dollar index |
 
 `CL=F` uses rate-of-change normalization rather than standard rolling percentile rank, since both sharp drops (demand collapse) and sharp spikes (supply shock) represent stress conditions.
+
+## Architecture
+
+```
+fetch_data.py    ->    process_data.py    ->    features.py    ->    pipeline.py
+yfinance + FRED       merge, resample,        rolling pct rank,   orchestration,
+                      compute ratios          composite score     parquet output
+```
 
 ## Setup
 
@@ -55,7 +71,7 @@ Get a key at [fred.stlouisfed.org](https://fred.stlouisfed.org/docs/api/api_key.
 ## Usage
 
 ```bash
-uv run main.py
+uv run stress-pipeline   # fetch data, compute stress score
 ```
 
 Outputs:
@@ -87,14 +103,8 @@ Outputs:
 
 ```bash
 uv run pytest          # run tests
-uv run ruff check .    # lint
 uv run ruff format .   # format
+uv run ruff check .    # lint
 ```
 
-## Architecture
 
-```
-fetch_data.py    ->    process_data.py    ->    features.py    ->    pipeline.py
-yfinance + FRED       merge, resample,        rolling pct rank,   orchestration,
-                      compute ratios          composite score     parquet output
-```
