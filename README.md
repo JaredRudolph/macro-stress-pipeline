@@ -1,5 +1,7 @@
 # macro-stress-pipeline
 
+**Part 1 of 3:** macro-stress-pipeline | [macro-stress-optimizer](https://github.com/JaredRudolph/macro-stress-optimizer) | [macro-stress-forecaster](https://github.com/JaredRudolph/macro-stress-forecaster)
+
 A data pipeline that ingests macro and market data, computes a composite financial stress score, and writes the result to parquet for downstream analysis.
 
 The score is a rolling percentile rank (3-year window) averaged across 16 leading indicators, normalized so that **1.0 = maximum stress**. It is built exclusively from indicators that tend to move ahead of broad market conditions, not reactive or coincident ones. The goal is a forward-looking risk signal that leads SPY drawdowns rather than confirming them after the fact.
@@ -28,7 +30,7 @@ The stress score is a forward-looking risk indicator built from indicators with 
 |---|---|
 | `ICSA` | Initial jobless claims |
 | `DRCCLACBS` | Credit card delinquency rate |
-| `BAMLH0A0HYM2` | ICE BofA HY OAS spread |
+| `DBAA - DGS10` | Moody's Baa yield minus 10Y Treasury (credit risk premium) |
 
 **Market (yfinance)**
 | Ticker | Indicator |
@@ -38,7 +40,7 @@ The stress score is a forward-looking risk indicator built from indicators with 
 | `HG=F` | Copper futures (growth proxy) |
 | `CL=F` | Crude oil futures (rate-of-change; dual stress regime) |
 | `EEM` | Emerging markets ETF |
-| `DX=F` | DXY dollar index |
+| `DX-Y.NYB` | DXY dollar index |
 
 `CL=F` uses rate-of-change normalization rather than standard rolling percentile rank, since both sharp drops (demand collapse) and sharp spikes (supply shock) represent stress conditions.
 
@@ -55,7 +57,7 @@ yfinance + FRED       merge, resample,        rolling pct rank,   orchestration,
 Requires [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/your-username/macro-stress-pipeline.git
+git clone https://github.com/JaredRudolph/macro-stress-pipeline.git
 cd macro-stress-pipeline
 uv sync
 ```
